@@ -121,3 +121,101 @@ class TestRideDataHandler(unittest.TestCase):
         self.handler.crear_usuario({"alias": "jperez", "nombre": "Juan"})
         ride = {
             'id': 3,
+            'rideDateAndTime': '2025-08-01 12:00',
+            'finalAddress': 'Centro',
+            'driver': 'jperez',
+            'status': 'ready',
+            'availableSeats': 2,
+            'participants': []
+        }
+        self.handler.rides.append(ride)
+        res = self.handler.rechazar_participante(3, 'ana')
+        self.assertEqual(res, 'Participante no encontrado')
+
+    def test_iniciar_y_terminar_ride(self):
+        """✅ Iniciar y terminar ride con participante presente"""
+        self.handler.crear_usuario({"alias": "jperez", "nombre": "Juan"})
+        self.handler.crear_usuario({"alias": "ana", "nombre": "Ana"})
+        ride = {
+            'id': 4,
+            'rideDateAndTime': '2025-08-02 10:00',
+            'finalAddress': 'Centro',
+            'driver': 'jperez',
+            'status': 'ready',
+            'availableSeats': 2,
+            'participants': [{
+                'participant': 'ana',
+                'destination': 'Centro',
+                'occupiedSpaces': 1,
+                'status': 'waiting',
+                'confirmation': 'confirmed'
+            }]
+        }
+        self.handler.rides.append(ride)
+        r = self.handler.iniciar_ride(4, ['ana'])
+        self.assertEqual(r, 'ok')
+        self.assertEqual(ride['participants'][0]['status'], 'inprogress')
+        t = self.handler.terminar_ride(4)
+        self.assertEqual(t, 'ok')
+        self.assertEqual(ride['participants'][0]['status'], 'notmarked')
+
+    def test_bajar_participante(self):
+        """✅ Participante baja correctamente de un ride en progreso"""
+        self.handler.crear_usuario({"alias": "ana", "nombre": "Ana"})
+        ride = {
+            'id': 5,
+            'rideDateAndTime': '2025-08-03 08:00',
+            'finalAddress': 'Parque',
+            'driver': 'jperez',
+            'status': 'inprogress',
+            'availableSeats': 2,
+            'participants': [{
+                'participant': 'ana',
+                'destination': 'Parque',
+                'occupiedSpaces': 1,
+                'status': 'inprogress',
+                'confirmation': 'confirmed'
+            }]
+        }
+        self.handler.rides.append(ride)
+        res = self.handler.bajar_participante(5, 'ana')
+        self.assertEqual(res, 'ok')
+        self.assertEqual(ride['participants'][0]['status'], 'completed')
+
+    def test_get_rides_por_usuario(self):
+        """✅ Obtener rides creados por un usuario"""
+        self.handler.crear_usuario({"alias": "luis", "nombre": "Luis"})
+        self.handler.rides.append({"id": 1, "driver": "luis", "status": "ready", "participants": []})
+        self.handler.rides.append({"id": 2, "driver": "ana", "status": "ready", "participants": []})
+        rides = self.handler.get_rides_por_usuario("luis")
+        self.assertEqual(len(rides), 1)
+        self.assertEqual(rides[0]['driver'], 'luis')
+
+    def test_get_participantes_estadisticas(self):
+        """✅ Estadísticas de participante: completed, missing, notmarked, rejected"""
+        self.handler.crear_usuario({"alias": "ana", "nombre": "Ana"})
+        self.handler.rides.append({
+            'id': 6,
+            'driver': 'jperez',
+            'status': 'done',
+            'availableSeats': 2,
+            'participants': [
+                {'participant': 'ana', 'status': 'completed', 'occupiedSpaces': 1, 'destination': 'A', 'confirmation': 'confirmed'},
+                {'participant': 'ana', 'status': 'missing', 'occupiedSpaces': 1, 'destination': 'B', 'confirmation': 'confirmed'},
+                {'participant': 'ana', 'status': 'notmarked', 'occupiedSpaces': 1, 'destination': 'C', 'confirmation': 'confirmed'},
+                {'participant': 'ana', 'status': 'rejected', 'occupiedSpaces': 1, 'destination': 'D', 'confirmation': 'rejected'}
+            ]
+        })
+        participantes = self.handler.get_participantes_estadisticas(6)
+        self.assertEqual(participantes[0]['participant']['previousRidesCompleted'], 1)
+        self.assertEqual(participantes[0]['participant']['previousRidesMissing'], 1)
+        self.assertEqual(participantes[0]['participant']['previousRidesNotMarked'], 1)
+        self.assertEqual(participantes[0]['participant']['previousRidesRejected'], 1)
+
+    def test_crear_usuarioD(self):
+        """✅ Método crear_usuarioD funciona igual que crear_usuario"""
+        resultado = self.handler.crear_usuarioD({"alias": "ana", "nombre": "Ana"})
+        self.assertTrue(resultado)
+
+if __name__ == '__main__':
+    unittest.main()
