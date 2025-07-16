@@ -1,0 +1,68 @@
+{
+    "usuarios": [
+        {
+            "alias": "jperez",
+            "nombre": "Juan Perez",
+            "carPlate": "ABC-123",
+            "rides": []
+        }
+    ],
+    "rides": [
+        {
+            "id": 1,
+            "rideDateAndTime": "2025/07/15 22:00",
+            "finalAddress": "Av Javier Prado 456, San Borja",
+            "driver": "jperez",
+            "status": "done",
+            "availableSeats": 3,
+            "participants": [
+                {
+                    "confirmation": "confirmed",
+                    "participant": {
+                        "alias": "lgomez",
+                        "previousRidesTotal": 1,
+                        "previousRidesCompleted": 1,
+                        "previousRidesMissing": 0,
+                        "previousRidesNotMarked": 0,
+                        "previousRidesRejected": 0
+                    },
+                    "destination": "Av Arambur\u00fa 245, Surquillo",
+                    "occupiedSpaces": 1,
+                    "status": "completed"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "rideDateAndTime": "2025/07/15 23:00",
+            "finalAddress": "Mi casa",
+            "driver": "jperez",
+            "status": "ready",
+            "availableSeats": 2,
+            "participants": [
+                {
+                    "participant": "angierodriguez",
+                    "destination": "Av Arambur\u00fa 245, Surquillo",
+                    "occupiedSpaces": 1,
+                    "status": "waiting",
+                    "confirmation": "confirmed"
+                },
+                {
+                    "participant": "flaviahonores",
+                    "destination": "Av Arambur\u00fa 245, Surquillo",
+                    "occupiedSpaces": 1,
+                    "status": "waiting",
+                    "confirmation": "confirmed"
+                },
+                {
+                    "participant": "sofiaku",
+                    "destination": "Av Arambur\u00fa 245, Surquillo",
+                    "occupiedSpaces": 1,
+                    "status": "waiting",
+                    "confirmation": null
+                }
+            ]
+        }
+    ],
+    "participaciones": []
+}
